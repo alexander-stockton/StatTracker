@@ -24,7 +24,10 @@ public:
 	void addCustomField(const string& fieldName, const string& fieldValue); // Create a new custom field
 	void removeCustomField(const string& fieldName); // Remove a custom field
 	string getCustomField(const string& fieldName); // Retrieve the value of a custom field
-	string updateCustomField(const string& type, const string& fieldName, const string& newValue); // Update the value of a custom field
+	void updateCustomField(const string& type, const string& fieldName, const string& newValue); // Update the value of a custom field
+
+	string getSheetName() const { return sheetName; } // Get the name of the sheet
+	string getCharacterName() const { return characterName; } // Get the name of the character
 
 	~CustomSheet();
 };

@@ -1,4 +1,5 @@
 #include "CustomSheet.h"
+#include "functions.h"
 
 #include <iostream>
 
@@ -10,21 +11,43 @@ CustomSheet::CustomSheet(string sName, string cName) {
 // Create a new custom field
 void CustomSheet::addCustomField(const string& fieldName, const string& fieldValue) {
 	customFields.insert({ fieldName, fieldValue });
-	cout << "\nADDED FIELD " + fieldName + " WITH VALUE " + fieldValue + " TO CHARACTER " + characterName + "\n";
+	setColor(14); cout << "\nADDED ";
+	setColor(13); cout << "FIELD ";
+	setColor(9); cout << "[";
+	setColor(15); cout << fieldName;
+	setColor(9); cout << "] ";
+	setColor(12); cout << "WITH ";
+	setColor(13); cout << "VALUE ";
+	setColor(9); cout << "[";
+	setColor(15); cout << fieldValue;
+	setColor(9); cout << "] ";
+	setColor(12); cout << "TO ";
+	setColor(11); cout << "CHARACTER ";
+	setColor(9); cout << "[";
+	setColor(15); cout << characterName;
+	setColor(9); cout << "]\n";
 }; 
 
 // Remove a custom field
 void CustomSheet::removeCustomField(const string& fieldName) {
 	customFields.erase(fieldName);
-	cout << "\nREMOVED FIELD " + fieldName + " FROM CHARACTER " + characterName + "\n";
+	setColor(14); cout << "\nREMOVED ";
+	setColor(13); cout << "FIELD ";
+	setColor(9); cout << "[";
+	setColor(15); cout << fieldName;
+	setColor(9); cout << "] ";
+	setColor(12); cout << "FROM ";
+	setColor(11); cout << "CHARACTER ";
+	setColor(9); cout << "[";
+	setColor(15); cout << characterName;
+	setColor(9); cout << "]\n";
 }; 
 
 // Retrieve the value of a custom field
 string CustomSheet::getCustomField(const string& fieldName) {
 	try {
-		auto value = customFields.find(fieldName);
-		if (value == customFields.end())
-			throw string("ERROR CODE -1: FIELD DOES NOT EXIST\n");
+		if (customFields.find(fieldName) == customFields.end())
+			throw GetErrors(0);
 
 		if (characterName.back() == 's' || characterName.back() == 'S' || characterName.back() == 'z' || characterName.back() == 'Z')
 			return "\n" + characterName + "' " + fieldName + ": " + customFields[fieldName];
@@ -32,33 +55,72 @@ string CustomSheet::getCustomField(const string& fieldName) {
 			return "\n" + characterName + "'s " + fieldName + ": " + customFields[fieldName];
 	}
 	catch (const string& error) {
+		setColor(12);
 		return "\n" + error;
 	}
 }; 
 
 // Update the value of a custom field
-string CustomSheet::updateCustomField(const string& type, const string& fieldName, const string& newValue) {
+void CustomSheet::updateCustomField(const string& type, const string& fieldName, const string& newValue) {
 	try {
-		auto value = customFields.find(fieldName);
-		if (value == customFields.end())
-			throw string("ERROR CODE -1: FIELD DOES NOT EXIST\n");
+		if (customFields.find(fieldName) == customFields.end())
+			throw GetErrors(0);
 
 		string copiedValue = customFields[fieldName];
 
 		if (type == "FIELD") {
-			removeCustomField(fieldName);
-			addCustomField(newValue, copiedValue);
-			return "\CHANGED NAME OF FIELD " + fieldName + " TO " + newValue + "\n";
+			customFields.erase(fieldName);
+			customFields.insert({ newValue, copiedValue });
+			
+			setColor(14); cout << "\nCHANGED ";
+			setColor(11); cout << "NAME ";
+			setColor(12); cout << "OF ";
+			setColor(13); cout << "FIELD ";
+			setColor(9); cout << "[";
+			setColor(15); cout << fieldName;
+			setColor(9); cout << "] ";
+			setColor(12); cout << "FOR ";
+			setColor(11); cout << "CHARACTER ";
+			setColor(9); cout << "[";
+			setColor(15); cout << characterName;
+			setColor(9); cout << "] ";
+			setColor(12); cout << "TO ";
+			setColor(9); cout << "[";
+			setColor(15); cout << newValue;
+			setColor(9); cout << "]\n";
 		}
 		else if (type == "VALUE") {
 			customFields[fieldName] = newValue;
-			return "\CHANGED VALUE IN FIELD " + fieldName + " FROM " + copiedValue + " TO " + newValue + "\n";
+
+			setColor(14); cout << "\nCHANGED ";
+			setColor(13); cout << "VALUE ";
+			setColor(12); cout << "IN ";
+			setColor(13); cout << "FIELD ";
+			setColor(9); cout << "[";
+			setColor(15); cout << fieldName;
+			setColor(9); cout << "] ";
+			setColor(12); cout << "FOR ";
+			setColor(11); cout << "CHARACTER ";
+			setColor(9); cout << "[";
+			setColor(15); cout << characterName;
+			setColor(9); cout << "] ";
+			setColor(12); cout << "FROM ";
+			setColor(9); cout << "[";
+			setColor(15); cout << copiedValue;
+			setColor(9); cout << "] ";
+			setColor(12); cout << "TO ";
+			setColor(9); cout << "[";
+			setColor(15); cout << newValue;
+			setColor(9); cout << "]\n";
 		}
-		else
-			throw string("ERROR CODE -2: EXPECTED field OR value FOR UPDATE TYPE\n");
+		else {
+			setColor(9);
+			throw GetErrors(1);
+		}
 	}
 	catch (const string& error) {
-		return "\n" + error;
+		setColor(12);
+		cout << "\n" + error + "\n";
 	}
 }
 
