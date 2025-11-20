@@ -344,14 +344,15 @@ string HandleCreate(string inputString, map<string, CustomSheet>& customSheets) 
     vector<string> words;
 	words = TokenizeAndClean(result);
 
-    setColor(14); cout << "\n" + words[0];
-    setColor(13); cout << " " + words[1];
+    setColor(14); cout << "\nCREATED";
+    setColor(13); cout << " SHEET";
     setColor(9); cout << " [";
-    setColor(15); cout << words[2];
+    setColor(15); cout << sheetName;
     setColor(9); cout << "]\n";
-    setColor(11); cout << words[3];
+    setColor(12); cout << "WITH ";
+    setColor(11); cout << "CHARACTER";
     setColor(9); cout << " [";
-    setColor(15); cout << words[4];
+    setColor(15); cout << charName;
     setColor(9); cout << "]\n";
 
     if (inputtingFields) {
