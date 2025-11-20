@@ -339,8 +339,6 @@ string HandleCreate(string inputString, map<string, CustomSheet>& customSheets) 
         }
     }
 
-    stringstream ss(result);
-    string word;
     vector<string> words;
 	words = TokenizeAndClean(result);
 
@@ -354,15 +352,6 @@ string HandleCreate(string inputString, map<string, CustomSheet>& customSheets) 
     setColor(9); cout << " [";
     setColor(15); cout << charName;
     setColor(9); cout << "]\n";
-
-    if (inputtingFields) {
-        setColor(13); cout << words[5] + "\n";
-        for (int i = 6; i < words.size(); i += 3) {
-            setColor(14); cout << " " + words[i] + " ";
-            setColor(11); cout << words[i + 1] + " "; cout << words[i + 2] + "\n";
-        }
-        cout << "\n";
-    }
 
     return "SUCCESS!\n\n";
 }
