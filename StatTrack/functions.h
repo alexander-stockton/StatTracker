@@ -12,37 +12,29 @@
 
 using namespace std;
 
-// --- Helper: Uppercase Conversion ---
-string ToUpper(const string& str);
+// ==================================================================================================
+// =                                           HELPERS                                              =
+// ==================================================================================================
 
-// --- Helper: Tokenizer ---
-// 1. Handles square brackets [Variable Input] as single tokens.
-// 2. Removes "A".
-// 3. Removes flowchart X'd out words (NEW, BUT, EXCEPT, AS, EXACTLY, ETC).
-vector<string> TokenizeAndClean(const string& input);
+// Set the current text and cell color
+void SetColor(short);
 
-// --- Helper: Check if token is a bracketed variable ---
-bool IsVar(const string& token);
+// Convert parameter into uppercase
+string ToUpper(const string&);
 
-// --- Helper: Strip brackets for final output ---
-string CleanVar(string token);
+// --- Tokenizer ---
+// Handles square brackets [Variable Input] as single tokens.
+// Removes select keywords (A, NEW, BUT, EXCEPT, AS, EXACTLY).
+vector<string> TokenizeAndClean(const string&);
 
-// --- Helper: Check Set Membership ---
-bool IsInSet(const string& token, const set<string>& keywords);
+// Is token a bracketed input?
+bool IsVar(const string&);
 
-// ==========================================
-// MAIN LOGIC: HandleCreate
-// ==========================================
-string HandleCreate(string inputString, map<string, CustomSheet>& customSheets);
+// Is token in specified keyword set?
+bool IsInSet(const string&, const set<string>&);
 
-// Listens to your sticky fingers
-string HandleInput(string inputString, map<string, CustomSheet>& customSheets);
-
-// you stoopid
-string GetErrors(short i);
-
-// this is neat
-void setColor(short color);
+// Strip brackets for final output
+string CleanVar(string);
 
 // Load cures our dementia
 CustomSheet load();
@@ -51,5 +43,34 @@ CustomSheet load();
 // Felt like being unique and separated everything with pipes
 // *.psv = Pipe Separated Values
 void save();
+
+
+// ==================================================================================================
+// =                                          CREATION                                              =
+// ==================================================================================================
+
+// Printing Function to make code shorter
+bool CheckForAlreadyExists(string, map<string, CustomSheet>&);
+
+// Printing Function to make code shorter
+void CreatedSheet(string, string);
+
+// Parses through creation instruction to construct a new character sheet
+// Handles filler words like "A", "NEW", and others
+// Several optional fields like 'with character' and 'with fields'
+string HandleCreate(string, map<string, CustomSheet>&);
+
+
+// ==================================================================================================
+// =                                          FRONT DESK                                            =
+// ==================================================================================================
+
+// Parses through input text
+// Routes instructions to each department
+string HandleInput(string, map<string, CustomSheet>&);
+
+// Retrieve an error given a specified code
+string GetErrors(short i);
+
 
 #endif // !FUNCTIONS_H

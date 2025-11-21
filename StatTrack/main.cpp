@@ -12,7 +12,7 @@
 using namespace std;
 
 int main() {
-	setColor(9);
+	SetColor(9);
 
 	map<string, CustomSheet> sheets;
 
@@ -36,12 +36,12 @@ int main() {
 
 	string input;
 	do {
-		setColor(15);
+		SetColor(15);
 		getline(cin, input);
 
 		cout << HandleInput(input, sheets);
 	} while (input != "EXIT");
 
-	setColor(9);
+	SetColor(9);
 	return 0;
 }
