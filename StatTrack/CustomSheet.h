@@ -26,8 +26,13 @@ public:
 	string getCustomField(const string& fieldName); // Retrieve the value of a custom field
 	void updateCustomField(const string& type, const string& fieldName, const string& newValue); // Update the value of a custom field
 
+	void removeAllCustomFields(); // Remove ALL custom fields from the sheet
+	void resetAllCustomFieldValues(); // Set the values in all custom fields to "nada"
+
 	string getSheetName() const { return sheetName; } // Get the name of the sheet
+	string setSheetName(string n) { sheetName = n; } // Set the name of the sheet
 	string getCharacterName() const { return characterName; } // Get the name of the character
+	string setCharacterName(string n) { characterName = n; } // Set the name of the character
 
 	~CustomSheet();
 };

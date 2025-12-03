@@ -60,6 +60,11 @@ void CreatedSheet(string, string);
 // Several optional fields like 'with character' and 'with fields'
 string HandleCreate(string, map<string, CustomSheet>&);
 
+// ==================================================================================================
+// =                                          DELETION                                              =
+// ==================================================================================================
+
+string HandleDelete(string, map<string, CustomSheet>&);
 
 // ==================================================================================================
 // =                                          FRONT DESK                                            =

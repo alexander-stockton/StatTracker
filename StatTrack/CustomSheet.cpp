@@ -124,6 +124,52 @@ void CustomSheet::updateCustomField(const string& type, const string& fieldName,
 	}
 }
 
+// [CustomSheet.cpp]
+
+// Remove ALL custom fields from the map
+void CustomSheet::removeAllCustomFields() {
+	if (customFields.empty()) {
+		SetColor(12); cout << "\nNO FIELDS TO REMOVE FOR [" << characterName << "].\n";
+		return;
+	}
+	customFields.clear();
+
+	SetColor(14); cout << "\nREMOVED ";
+	SetColor(12); cout << "ALL "; // Red for emphasis
+	SetColor(13); cout << "FIELDS ";
+	SetColor(12); cout << "FROM ";
+	SetColor(11); cout << "CHARACTER ";
+	SetColor(9); cout << "[";
+	SetColor(15); cout << characterName;
+	SetColor(9); cout << "]\n";
+}
+
+// Set ALL custom field values to "nada"
+void CustomSheet::resetAllCustomFieldValues() {
+	if (customFields.empty()) {
+		SetColor(12); cout << "\nNO FIELDS TO UPDATE FOR [" << characterName << "].\n";
+		return;
+	}
+
+	// Iterate and set values to "nada"
+	for (auto& field : customFields) {
+		field.second = "nada";
+	}
+
+	SetColor(14); cout << "\nRESET ";
+	SetColor(12); cout << "ALL ";
+	SetColor(13); cout << "VALUES ";
+	SetColor(12); cout << "TO ";
+	SetColor(9); cout << "[";
+	SetColor(15); cout << "nada";
+	SetColor(9); cout << "] ";
+	SetColor(12); cout << "FOR ";
+	SetColor(11); cout << "CHARACTER ";
+	SetColor(9); cout << "[";
+	SetColor(15); cout << characterName;
+	SetColor(9); cout << "]\n";
+}
+
 /* Destroy relevant data
  * (Shuts up the compiler) */
 CustomSheet::~CustomSheet()
