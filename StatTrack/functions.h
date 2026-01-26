@@ -58,7 +58,7 @@ void CreatedSheet(string, string);
 // Parses through creation instruction to construct a new character sheet
 // Handles filler words like "A", "NEW", and others
 // Several optional fields like 'with character' and 'with fields'
-string HandleCreate(string, map<string, CustomSheet>&);
+string HandleCreate(string, map<string, CustomSheet>&, bool);
 
 // ==================================================================================================
 // =                                          DELETION                                              =

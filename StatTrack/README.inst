@@ -1,0 +1,136 @@
+
+
+CUSTOM CHARACTER SHEET STAT TRACKER
+Copyright (c) 2026 Alexander James Stockton
+-----------------------------------
+
+1. License
+2. Introduction
+3. Installation
+4. Usage
+	4a. Workflow
+	4b. Modes
+	4c. Commands
+	4d. Files
+5. Contributing
+6. Contact
+
+-----------------------------------
+1. License
+-----------------------------------
+
+MIT License
+
+Copyright (c) 2026 Alexander James Stockton
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-----------------------------------
+2. Introduction
+-----------------------------------
+
+CUSTOM CHARACTER SHEET STAT TRACKER (StatTrack) is a tool for tabletop and
+role-playing fans who are tired of running out of readable paper space and
+erasers. StatTrack allows users to create and maintain custom character sheets
+on their computer using the command-line. This enables them to add and remove
+fields as necessary for any special case. Template files are included to start.
+
+-----------------------------------
+3. Installation
+-----------------------------------
+
+Windows
+-------
+Create a folder for StatTrack, download the st.zip file from the GitHub
+repository, and extract all files into the create folder. Then, run st.exe.
+
+Linux / MacOS
+-------------
+TBD
+
+-----------------------------------
+4. Usage
+-----------------------------------
+
+4a. Workflow
+------------
+document how code processes instructions here
+(note that there is no overwriting files. you must delete them first if you want to use its name for something else)
+
+4b. Modes
+---------
+StatTrack has two modes: EZ and Nerd.
+- EZ mode lets users navigate menus, and it will prompt for input when
+  necessary. If you prefer video-game-like menus, EZ mode is for you.
+  Upon running st.exe, type the command 'ez' for EZ.
+
+- Nerd mode receives commands directly from the command line. This is
+  preferable if you're experienced with command-line tools already.
+  Upon running st.exe, type the command 'nerd' for Nerd.
+
+4c. Commands
+------------
+The following commands are available to both modes:
+
+exit						| Exit the program
+ez							| Start in EZ
+help						| Show a list of commands, their formats, and descriptions
+nerd						| Start in Nerd
+quit						| Exit the program
+
+
+The following commands are available to Nerd mode only:
+
+cr (arg)				| Create a new thing and save it in [filename]
+arguments: (default -ef)
+	-c [name]			| Character with [name]
+	-ef					| Empty file
+	-i [filename]		| Instance from a template [filename]
+	-t					| Template file
+
+del (arg)				| Delete something
+arguments: (default -f)
+	-a					| All files except for the executable
+	-c					| All characters
+	-f  [filename]		| Specific file [filename]
+	-i					| All instances
+	-t					| All templates
+	-w  [filename]		| Wipe the contents of a specific file [filename]
+
+read (arg)				| Read data into the console window
+arguments: (default -f)
+	-f  [filename]		| Contents of [filename]
+	-cd [name] [field]	| Data of [field] from character [name]
+	-if [file] [field]	| Data of [field] from instance [file]
+
+edit [arg]				| Prompts for new data to replace something
+arguments:
+	-cd [name] [field]	| Replace [field] from character [name]
+	-if [file] [field]	| Replace [field] from instance [file]
+
+cp [arg]				| Copy something into another thing
+arguments:
+	-dc [name1] [field] [name2] | Copy data from [field] in the file of character [name1] to file of character [name2]
+	-df [file1] [field] [file2] | Copy data from [field] in the instance [file1] to [file2]
+	-di [file] [field] [field2] | Copy data from [field] to [field2] in the instance file [file]
+	-dn [name] [field] [field2] | Copy data from [field] to [field2] in the file of character [name]
+	-f  [filename]				| Duplicate [filename] (appends "_" to new file along with the # of copy)
+	-c  [name]					| Duplicate file of character [name] (appends "_" to new file along with the # of copy)
+	-sd [source] [dest]			| Copy data from [source] file to [dest] file
+
