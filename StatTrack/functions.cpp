@@ -3,18 +3,33 @@
 #include "CustomSheet.h"
 #include "functions.h"
 #include <windows.h>
+#include <conio.h>
 #include <iostream>
 #include <algorithm>
 #include <string>
 #include <vector>
-#include <sstream>
 #include <set>
 
 using namespace std;
 
+// ==================================================================================================
+// =                                    CONSTANT EXPRESSIONS                                        =
+// ==================================================================================================
+constexpr auto CLEAR = "\x1b[2J\x1b[H";
+constexpr short DOWN = 80;
+constexpr short UP = 72;
+constexpr short RIGHT = 77;
+
+// MENU FLAGS
+struct flags {
+    unsigned int SELECTION : 2;
+    unsigned int MODE : 2;
+    unsigned int STEP : 3;
+    unsigned int SELECTED : 1;
+}; static flags PROGRAM_FLAGS = { 0, 0, 0, 0 };
 
 // ==================================================================================================
-// =                                           HELPERS                                              =
+// =                                          HELPERS                                               =
 // ==================================================================================================
 
 // Set the current text and cell color
@@ -25,6 +40,23 @@ string ToUpper(const string& str) {
     string s = str;
     transform(s.begin(), s.end(), s.begin(), toupper);
     return s;
+}
+
+// Read in arrow key input for meny navigation
+void GetNormalModeMenuInput(char& c) {
+    char* _buffer = new char[2]();
+    _buffer[0] = _getch();
+    _buffer[1] = _getch();
+    c = _buffer[1];
+    delete[] _buffer;
+}
+
+void SetFlags(bool* flags) {
+
+    PROGRAM_FLAGS.SELECTED = flags[0];
+    PROGRAM_FLAGS.SELECTION = flags[1];
+    PROGRAM_FLAGS.MODE = flags[2];
+    PROGRAM_FLAGS.STEP = flags[3];
 }
 
 // --- Tokenizer ---
@@ -121,6 +153,11 @@ CustomSheet load() {
     return *(new CustomSheet("nada", "nada"));
 }
 
+// Clears console window
+void ClearConsole() {
+    
+}
+
 // Save lets us store stuff in files
 // Felt like being unique and separated everything with pipes
 // *.psv = Pipe Separated Values
@@ -162,36 +199,91 @@ void CreatedSheet(string sName, string cName) {
 // Several optional fields like 'with character' and 'with fields'
 string HandleCreate(string inputString, map<string, CustomSheet>& customSheets, bool mode) {
 
-    bool inputtingCharacter = true; // Are we inputting a character name?
-    bool inputtingFields = true; // Are we inputting data fields?
-
-    // create new sheet with character named [name one]
-
     vector<string> inst; // Create pointer for tokenized instructions without reserving the space
-    
+	SetFlags(new bool[4]{ 0, 0, 0, 0 }); // Reset program flags
+
+    // MENU DISPLAY
     switch (mode) {
-    case 0: // normal person mode
+    case 0: { // normal person mode
+        
+        // GUI
+        string displayMessage = "";
+
+        char c = 0; // Input storage
+
+        while (!PROGRAM_FLAGS.SELECTED) {
+            cout << CLEAR;
+
+            // PUT DECORATIONS HERE LATER
+            
+            // debug info
+            cout << "selection: " << PROGRAM_FLAGS.SELECTION << "\n";
+			cout << "mode: " << PROGRAM_FLAGS.MODE << "\n";
+			cout << "step: " << PROGRAM_FLAGS.STEP << "\n";
+			cout << "selected: " << PROGRAM_FLAGS.SELECTED << "\n";
+
+            displayMessage = "\nWhat do you want to create?";
+            displayMessage += "\n---------------------------";
+
+            switch (PROGRAM_FLAGS.SELECTION) {
+            case 0b00: {
+                displayMessage += "\nCharacter Sheet File      >";
+                displayMessage += "\nCharacter Sheet Field      ";
+                displayMessage += "\nNew Enemy Type File        ";
+                displayMessage += "\nNew Enemy Instance File    ";
+                break;
+            }
+            case 0b01: {
+                displayMessage += "\nCharacter Sheet File       ";
+                displayMessage += "\nCharacter Sheet Field     >";
+                displayMessage += "\nNew Enemy Type File        ";
+                displayMessage += "\nNew Enemy Instance File    ";
+                break;
+            }
+            case 0b10: {
+                displayMessage += "\nCharacter Sheet File       ";
+                displayMessage += "\nCharacter Sheet Field      ";
+                displayMessage += "\nNew Enemy Type File       >";
+                displayMessage += "\nNew Enemy Instance File    ";
+                break;
+            }
+            case 0b11: {
+                displayMessage += "\nCharacter Sheet File       ";
+                displayMessage += "\nCharacter Sheet Field      ";
+                displayMessage += "\nNew Enemy Type File        ";
+                displayMessage += "\nNew Enemy Instance File   >";
+                break;
+            }
+            default: break;
+            }
+
+			cout << displayMessage;
+
+            // Navigate start menu
+            GetNormalModeMenuInput(c);
+            PROGRAM_FLAGS.SELECTION = (c == DOWN) ? ++PROGRAM_FLAGS.SELECTION : ((c == UP) ? --PROGRAM_FLAGS.SELECTION : PROGRAM_FLAGS.SELECTION);
+            PROGRAM_FLAGS.SELECTED = (c == RIGHT) ? 1 : 0;
+        }
+
+        // After pressing enter/return, move into the sub-menu for the selected option.
+        // This sets the current sub-menu to the same as the menu selection from earlier.
+        PROGRAM_FLAGS.MODE = PROGRAM_FLAGS.SELECTION;
+        PROGRAM_FLAGS.STEP++;
+
+
+        return "s";
+
+        break;
+    }
+    case 1: // nerd mode
         if (inputString.empty())
             return GetErrors(2) + "\nEXPECTED INPUT";
 
         // Convert Global Input to Uppercase
         inputString = ToUpper(inputString);
-
         // tokenize instruction data
         inst = TokenizeAndClean(inputString);
 
-        // "What do you want to create?"
-        // > Character Sheet File
-        // > Character Sheet Field
-        // > New Enemy Type File
-        // > New Enemy Instance File
-
-        return "s";
-        
-
-        break;
-    case 1: // nerd mode
-        
         // If you're in nerd mode, the create instruction takes options like -cs, -cf, -et, and -ei corresponding to the options above
         // "CREATE MODE"
         // > 
@@ -208,7 +300,7 @@ string HandleCreate(string inputString, map<string, CustomSheet>& customSheets, 
 
 string HandleDelete(string inputString, map<string, CustomSheet>& customSheets) {
 
-    
+    return "s";
 }
 
 // ==================================================================================================
@@ -218,59 +310,66 @@ string HandleDelete(string inputString, map<string, CustomSheet>& customSheets) 
 // Parses through input text
 // Routes instructions to each department
 string HandleInput(string inputString, map<string, CustomSheet>& customSheets) {
-    // cat stepped on the keyboard
-    if (inputString.empty()) return GetErrors(2);
+	// skeleton code while I implement creation functionality
+    inputString = ToUpper(inputString);
 
-    // Convert all text to uppercase
-    transform(inputString.begin(), inputString.end(), inputString.begin(), toupper);
-
-    // Parse string into tokens
-    stringstream ss(inputString);
-    string segment;
-    vector<string> tokens;
-    while (ss >> segment)
-        tokens.push_back(segment);
-
-    // Record first and second tokens for use later
-    string first = tokens[0];
-    string second = (tokens.size() > 1) ? tokens[1] : "";
-
-    // get lost you disgusting vectors...
-    if (!tokens.size() > 0) tokens.erase(tokens.begin());
+    if (inputString == "CREATE") {
+        return HandleCreate(inputString, customSheets, 0) + "\n";
+     }
     
-    // Use the stupid gross disgusting useless tokens to remove the first keyword from input
-    string restOfInput;
-    for (string s : tokens)
-        restOfInput += s + " ";
+    //// cat stepped on the keyboard
+    //if (inputString.empty()) return GetErrors(2);
 
-    // Check Second Keyword Constraint
-    set<string> restrictedSecond = {
-        "CREATE", "ADD", "INSERT", "BUILD", "FORM", "NEW"
-        "REMOVE", "DELETE",
-        "UPDATE", "CHANGE", "MODIFY", "SET",
-        "READ", "RETURN", "GET"
-    };
+    //// Convert all text to uppercase
+    //transform(inputString.begin(), inputString.end(), inputString.begin(), toupper);
 
-    // If second keyword IS NOT in the list (or doesn't exist), proceed
-    if (restrictedSecond.find(second) == restrictedSecond.end()) {
+    //// Parse string into tokens
+    //stringstream ss(inputString);
+    //string segment;
+    //vector<string> tokens;
+    //while (ss >> segment)
+    //    tokens.push_back(segment);
 
-        // Dispatch based on First Keyword
-        if (IsInSet(first, { "CREATE", "ADD", "INSERT", "BUILD", "FORM", "NEW" })) {
-            return HandleCreate(restOfInput, customSheets, 0) + "\n";
-        }
-        else if (IsInSet(first, { "REMOVE", "DELETE" })) {
-            return HandleDelete(restOfInput, customSheets);
-        }
-        else if (IsInSet(first, { "UPDATE", "CHANGE", "MODIFY", "SET" })) {
-            //return HandleUpdate(restOfInput, customSheets);
-        }
-        else if (IsInSet(first, { "READ", "RETURN", "GET" })) {
-            //return HandleGet(restOfInput, customSheets);
-        }
-    }
+    //// Record first and second tokens for use later
+    //string first = tokens[0];
+    //string second = (tokens.size() > 1) ? tokens[1] : "";
 
-    // stoopid idiots didn't read the documentation
-    return GetErrors(2);
+    //// get lost you disgusting vectors...
+    //if (!tokens.size() > 0) tokens.erase(tokens.begin());
+    //
+    //// Use the stupid gross disgusting useless tokens to remove the first keyword from input
+    //string restOfInput;
+    //for (string s : tokens)
+    //    restOfInput += s + " ";
+
+    //// Check Second Keyword Constraint
+    //set<string> restrictedSecond = {
+    //    "CREATE", "ADD", "INSERT", "BUILD", "FORM", "NEW"
+    //    "REMOVE", "DELETE",
+    //    "UPDATE", "CHANGE", "MODIFY", "SET",
+    //    "READ", "RETURN", "GET"
+    //};
+
+    //// If second keyword IS NOT in the list (or doesn't exist), proceed
+    //if (restrictedSecond.find(second) == restrictedSecond.end()) {
+
+    //    // Dispatch based on First Keyword
+    //    if (IsInSet(first, { "CREATE", "ADD", "INSERT", "BUILD", "FORM", "NEW" })) {
+    //        return HandleCreate(restOfInput, customSheets, 0) + "\n";
+    //    }
+    //    else if (IsInSet(first, { "REMOVE", "DELETE" })) {
+    //        return HandleDelete(restOfInput, customSheets);
+    //    }
+    //    else if (IsInSet(first, { "UPDATE", "CHANGE", "MODIFY", "SET" })) {
+    //        //return HandleUpdate(restOfInput, customSheets);
+    //    }
+    //    else if (IsInSet(first, { "READ", "RETURN", "GET" })) {
+    //        //return HandleGet(restOfInput, customSheets);
+    //    }
+    //}
+
+    //// stoopid idiots didn't read the documentation
+    //return GetErrors(2);
 }
 
 // Retrieve an error given a specified code

@@ -58,7 +58,7 @@ fields as necessary for any special case. Template files are included to start.
 Windows
 -------
 Create a folder for StatTrack, download the st.zip file from the GitHub
-repository, and extract all files into the create folder. Then, run st.exe.
+repository, and extract all files into the created folder. Then, run st.exe.
 
 Linux / MacOS
 -------------
@@ -123,6 +123,7 @@ edit [arg]				| Prompts for new data to replace something
 arguments:
 	-cd [name] [field]	| Replace [field] from character [name]
 	-if [file] [field]	| Replace [field] from instance [file]
+	-ow [filename]		| Overwrite entire file [filename] with new data in *.psv format
 
 cp [arg]				| Copy something into another thing
 arguments:
@@ -134,3 +135,21 @@ arguments:
 	-c  [name]					| Duplicate file of character [name] (appends "_" to new file along with the # of copy)
 	-sd [source] [dest]			| Copy data from [source] file to [dest] file
 
+
+4d. Files
+---------
+There are three file types StatTrack can read and write:
+- *.psv
+	- Pipe-Separated Values
+	- Each pipe " | " denotes a new piece of information.
+	- These hold the data for one Character, Instance, or object at a time.
+
+- *.tf
+	- Template File
+	- These hold the structure for Instance files.
+	- Modify these in a text editor, not the application.
+
+- *.cmp
+	- Campaign
+	- Contains a list of characters, places, maps, etc.
+	- Contains any background information the Dungeon Master wants to record
