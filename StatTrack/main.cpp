@@ -11,8 +11,20 @@
 
 using namespace std;
 
-int main() {
+int main(int argc, char* argv[]) {
 	SetColor(9);
+
+	PROGRAM_FLAGS.NERD = (argv[1] == "-n") ? 1 : 0; // Default to normal mode
+	if (argc == 2) {
+		std::cout << "Usage: " << argv[0] << " <" << argv[1] << ">\n";
+		return 1;
+	}
+
+	std::cout << "Program name: " << argv[0] << "\n";
+	std::cout << "Arguments:\n";
+	for (int i = 1; i < argc; ++i) {
+		std::cout << "  " << i << ": " << argv[i] << "\n";
+	}
 
 	map<string, CustomSheet> sheets;
 

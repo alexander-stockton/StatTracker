@@ -124,6 +124,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CustomSheet.h" />
+    <ClInclude Include="functions.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CustomSheet.cpp" />

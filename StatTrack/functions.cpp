@@ -20,14 +20,6 @@ constexpr short DOWN = 80;
 constexpr short UP = 72;
 constexpr short RIGHT = 77;
 
-// MENU FLAGS
-struct flags {
-    unsigned int SELECTION : 2;
-    unsigned int MODE : 2;
-    unsigned int STEP : 3;
-    unsigned int SELECTED : 1;
-}; static flags PROGRAM_FLAGS = { 0, 0, 0, 0 };
-
 // ==================================================================================================
 // =                                          HELPERS                                               =
 // ==================================================================================================
@@ -52,11 +44,9 @@ void GetNormalModeMenuInput(char& c) {
 }
 
 void SetFlags(bool* flags) {
-
-    PROGRAM_FLAGS.SELECTED = flags[0];
-    PROGRAM_FLAGS.SELECTION = flags[1];
-    PROGRAM_FLAGS.MODE = flags[2];
-    PROGRAM_FLAGS.STEP = flags[3];
+    PROGRAM_FLAGS.SELECTION = flags[0];
+    PROGRAM_FLAGS.MODE = flags[1];
+    PROGRAM_FLAGS.STEP = flags[2];
 }
 
 // --- Tokenizer ---
@@ -153,15 +143,10 @@ CustomSheet load() {
     return *(new CustomSheet("nada", "nada"));
 }
 
-// Clears console window
-void ClearConsole() {
-    
-}
-
 // Save lets us store stuff in files
 // Felt like being unique and separated everything with pipes
 // *.psv = Pipe Separated Values
-void save() {};
+void save(string name, string content) {};
 
 // ==================================================================================================
 // =                                          CREATION                                              =
@@ -197,21 +182,23 @@ void CreatedSheet(string sName, string cName) {
 // Parses through creation instruction to construct a new character sheet
 // Handles filler words like "A", "NEW", and others
 // Several optional fields like 'with character' and 'with fields'
-string HandleCreate(string inputString, map<string, CustomSheet>& customSheets, bool mode) {
+string HandleCreate(string inputString, map<string, CustomSheet>& customSheets) {
 
     vector<string> inst; // Create pointer for tokenized instructions without reserving the space
-	SetFlags(new bool[4]{ 0, 0, 0, 0 }); // Reset program flags
+	SetFlags(new bool[4]{ 0, 0, 0 }); // Reset program flags
 
     // MENU DISPLAY
-    switch (mode) {
+    switch (PROGRAM_FLAGS.NERD) {
     case 0: { // normal person mode
         
         // GUI
         string displayMessage = "";
+        string nextModeMessage = "";
 
-        char c = 0; // Input storage
+        // Input storage
+        char c = 0;
 
-        while (!PROGRAM_FLAGS.SELECTED) {
+        while (!PROGRAM_FLAGS.STEP) {
             cout << CLEAR;
 
             // PUT DECORATIONS HERE LATER
@@ -219,42 +206,44 @@ string HandleCreate(string inputString, map<string, CustomSheet>& customSheets, 
             // debug info
             cout << "selection: " << PROGRAM_FLAGS.SELECTION << "\n";
 			cout << "mode: " << PROGRAM_FLAGS.MODE << "\n";
-			cout << "step: " << PROGRAM_FLAGS.STEP << "\n";
-			cout << "selected: " << PROGRAM_FLAGS.SELECTED << "\n";
+			cout << "step: " << PROGRAM_FLAGS.STEP + 1 << "\n";
 
             displayMessage = "\nWhat do you want to create?";
             displayMessage += "\n---------------------------";
 
+            // Create Menu Options
             switch (PROGRAM_FLAGS.SELECTION) {
-            case 0b00: {
+            case 0b000: {
                 displayMessage += "\nCharacter Sheet File      >";
-                displayMessage += "\nCharacter Sheet Field      ";
-                displayMessage += "\nNew Enemy Type File        ";
+                displayMessage += "\nCharacter From Template    ";
+                displayMessage += "\nTemplate File              ";
                 displayMessage += "\nNew Enemy Instance File    ";
                 break;
             }
-            case 0b01: {
+            case 0b001: {
                 displayMessage += "\nCharacter Sheet File       ";
-                displayMessage += "\nCharacter Sheet Field     >";
-                displayMessage += "\nNew Enemy Type File        ";
+                displayMessage += "\nCharacter From Template   >";
+                displayMessage += "\nTemplate File              ";
                 displayMessage += "\nNew Enemy Instance File    ";
                 break;
             }
-            case 0b10: {
+            case 0b010: {
                 displayMessage += "\nCharacter Sheet File       ";
-                displayMessage += "\nCharacter Sheet Field      ";
-                displayMessage += "\nNew Enemy Type File       >";
+                displayMessage += "\nCharacter From Template    ";
+                displayMessage += "\nTemplate File             >";
                 displayMessage += "\nNew Enemy Instance File    ";
                 break;
             }
-            case 0b11: {
+            case 0b011: {
                 displayMessage += "\nCharacter Sheet File       ";
-                displayMessage += "\nCharacter Sheet Field      ";
-                displayMessage += "\nNew Enemy Type File        ";
+                displayMessage += "\nCharacter From Template    ";
+                displayMessage += "\nTemplate File              ";
                 displayMessage += "\nNew Enemy Instance File   >";
                 break;
             }
-            default: break;
+            default:
+                PROGRAM_FLAGS.SELECTION = 0;
+                break;
             }
 
 			cout << displayMessage;
@@ -262,13 +251,23 @@ string HandleCreate(string inputString, map<string, CustomSheet>& customSheets, 
             // Navigate start menu
             GetNormalModeMenuInput(c);
             PROGRAM_FLAGS.SELECTION = (c == DOWN) ? ++PROGRAM_FLAGS.SELECTION : ((c == UP) ? --PROGRAM_FLAGS.SELECTION : PROGRAM_FLAGS.SELECTION);
-            PROGRAM_FLAGS.SELECTED = (c == RIGHT) ? 1 : 0;
+            PROGRAM_FLAGS.MODE = (c == RIGHT) ? PROGRAM_FLAGS.SELECTION : 0;
         }
 
         // After pressing enter/return, move into the sub-menu for the selected option.
         // This sets the current sub-menu to the same as the menu selection from earlier.
-        PROGRAM_FLAGS.MODE = PROGRAM_FLAGS.SELECTION;
         PROGRAM_FLAGS.STEP++;
+		displayMessage += "\n\n---------------------------\n";
+
+        while (PROGRAM_FLAGS.STEP == 2) {
+            // STEP 2: Get further input based on selected option
+            switch (PROGRAM_FLAGS.MODE) {
+            case 0b00:
+                displayMessage += "\nWould you like to copy off a template?";
+                displayMessage += "\nY >";
+                displayMessage += "\nN >";
+            }
+        }
 
 
         return "s";
@@ -314,7 +313,7 @@ string HandleInput(string inputString, map<string, CustomSheet>& customSheets) {
     inputString = ToUpper(inputString);
 
     if (inputString == "CREATE") {
-        return HandleCreate(inputString, customSheets, 0) + "\n";
+        return HandleCreate(inputString, customSheets) + "\n";
      }
     
     //// cat stepped on the keyboard
