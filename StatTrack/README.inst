@@ -139,12 +139,12 @@ arguments:
 4d. Files
 ---------
 There are three file types StatTrack can read and write:
-- *.psv
-	- Pipe-Separated Values
-	- Each pipe " | " denotes a new piece of information.
-	- These hold the data for one Character, Instance, or object at a time.
+- *.cha
+	- Character File
+	- Binary data file for a single Character, Instance, or object at a time.
+	- Translated by st.exe for common use
 
-- *.tf
+- *.tpf
 	- Template File
 	- These hold the structure for Instance files.
 	- Modify these in a text editor, not the application.

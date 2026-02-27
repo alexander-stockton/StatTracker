@@ -25,7 +25,7 @@ string ToUpper(const string&);
 // --- Tokenizer ---
 // Handles square brackets [Variable Input] as single tokens.
 // Removes select keywords (A, NEW, BUT, EXCEPT, AS, EXACTLY).
-vector<string> TokenizeAndClean(const string&);
+vector<string> Tokenize(const string&);
 
 // Is token a bracketed input?
 bool IsVar(const string&);

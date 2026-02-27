@@ -133,6 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="default.psv" />
+    <None Include="index.psv" />
     <None Include="README.inst" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
