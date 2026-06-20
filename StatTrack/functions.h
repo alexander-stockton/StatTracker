@@ -25,7 +25,7 @@ string ToUpper(const string&);
 // --- Tokenizer ---
 // Handles square brackets [Variable Input] as single tokens.
 // Removes select keywords (A, NEW, BUT, EXCEPT, AS, EXACTLY).
-vector<string> TokenizeAndClean(const string&);
+vector<string> Tokenize(const string&);
 
 // Is token a bracketed input?
 bool IsVar(const string&);
@@ -35,6 +35,14 @@ bool IsInSet(const string&, const set<string>&);
 
 // Strip brackets for final output
 string CleanVar(string);
+
+// Menu Flags
+struct flags {
+    unsigned int SELECTION : 2;
+    unsigned int MODE : 2;
+    unsigned int STEP : 3;
+    unsigned int NERD : 1;
+}; static flags PROGRAM_FLAGS = { 0, 0, 0, 0 };
 
 // Load cures our dementia
 CustomSheet load();
@@ -58,7 +66,7 @@ void CreatedSheet(string, string);
 // Parses through creation instruction to construct a new character sheet
 // Handles filler words like "A", "NEW", and others
 // Several optional fields like 'with character' and 'with fields'
-string HandleCreate(string, map<string, CustomSheet>&, bool);
+string HandleCreate(string, map<string, CustomSheet>&);
 
 // ==================================================================================================
 // =                                          DELETION                                              =
