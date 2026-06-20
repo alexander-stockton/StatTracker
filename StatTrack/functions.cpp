@@ -23,14 +23,6 @@ constexpr short DOWN = 80;
 constexpr short UP = 72;
 constexpr short RIGHT = 77;
 
-// MENU FLAGS
-struct flags {
-    unsigned int SELECTION : 2;
-    unsigned int MODE : 2;
-    unsigned int STEP : 3;
-    unsigned int SELECTED : 1;
-}; static flags PROGRAM_FLAGS = { 0, 0, 0, 0 };
-
 // ==================================================================================================
 // =                                          HELPERS                                               =
 // ==================================================================================================
@@ -46,7 +38,7 @@ string ToUpper(const string& str) {
 }
 
 // Read in arrow key input for meny navigation
-void GetNormalModeMenuInput(char& c) {
+static void GetNormalModeMenuInput(char& c) {
 	char* _buffer = new char[2]();
 	_buffer[0] = _getch();
 	_buffer[1] = _getch();
@@ -54,83 +46,82 @@ void GetNormalModeMenuInput(char& c) {
 	delete[] _buffer;
 }
 
-void SetFlags(bool* flags) {
-
-    PROGRAM_FLAGS.SELECTED = flags[0];
-    PROGRAM_FLAGS.SELECTION = flags[1];
-    PROGRAM_FLAGS.MODE = flags[2];
-    PROGRAM_FLAGS.STEP = flags[3];
+static void SetFlags(bool* flags) {
+	PROGRAM_FLAGS.SELECTION = flags[0];
+	PROGRAM_FLAGS.MODE = flags[1];
+	PROGRAM_FLAGS.STEP = flags[2];
 }
 
 // --- Tokenizer ---
-// Handles square brackets [Variable Input] as single tokens.
-// Removes select keywords (A, NEW, BUT, EXCEPT, AS, EXACTLY).
-vector<string> TokenizeAndClean(const string& input) {
-    vector<string> tokens;
-    string currentToken;
-    bool insideBrackets = false;
+// Parses through instruction string and returns vector of tokens
+vector<string> Tokenize(const string& input) {
+	
+	
+	//vector<string> tokens;
+	//string currentToken;
+	//bool insideBrackets = false;
 
-    // Set of words to ignore completely based on flowchart X's
-    set<string> ignoredWords = {
-        "NEW", "BUT", "EXCEPT", "AS", "EXACTLY", "A", "NAMED", "CALLED", "TITLED"
-    };
+	//// Set of words to ignore completely based on flowchart X's
+	//set<string> ignoredWords = {
+	//    "NEW", "BUT", "EXCEPT", "AS", "EXACTLY", "A", "NAMED", "CALLED", "TITLED"
+	//};
 
-    for (size_t i = 0; i < input.length(); ++i) {
-        char c = input[i];
+	//for (size_t i = 0; i < input.length(); ++i) {
+	//    char c = input[i];
 
-        if (c == '[') {
-            if (!currentToken.empty()) {
-                tokens.push_back(currentToken);
-                currentToken.clear();
-            }
-            insideBrackets = true;
-            currentToken += c;
-        }
-        else if (c == ']') {
-            currentToken += c;
-            insideBrackets = false;
-            tokens.push_back(currentToken);
-            currentToken.clear();
-        }
-        else if (isspace(c) && !insideBrackets) {
-            if (!currentToken.empty()) {
-                tokens.push_back(currentToken);
-                currentToken.clear();
-            }
-        }
-        else {
-            // Handle period at end of sentence as distinct token if needed, 
-            // or just treat as part of word.
-            if (c == '.' && !insideBrackets) {
-                if (!currentToken.empty()) {
-                    tokens.push_back(currentToken);
-                    currentToken.clear();
-                }
-                tokens.push_back(".");
-            }
-            else {
-                currentToken += c;
-            }
-        }
-    }
-    if (!currentToken.empty()) tokens.push_back(currentToken);
+	//    if (c == '[') {
+	//        if (!currentToken.empty()) {
+	//            tokens.push_back(currentToken);
+	//            currentToken.clear();
+	//        }
+	//        insideBrackets = true;
+	//        currentToken += c;
+	//    }
+	//    else if (c == ']') {
+	//        currentToken += c;
+	//        insideBrackets = false;
+	//        tokens.push_back(currentToken);
+	//        currentToken.clear();
+	//    }
+	//    else if (isspace(c) && !insideBrackets) {
+	//        if (!currentToken.empty()) {
+	//            tokens.push_back(currentToken);
+	//            currentToken.clear();
+	//        }
+	//    }
+	//    else {
+	//        // Handle period at end of sentence as distinct token if needed, 
+	//        // or just treat as part of word.
+	//        if (c == '.' && !insideBrackets) {
+	//            if (!currentToken.empty()) {
+	//                tokens.push_back(currentToken);
+	//                currentToken.clear();
+	//            }
+	//            tokens.push_back(".");
+	//        }
+	//        else {
+	//            currentToken += c;
+	//        }
+	//    }
+	//}
+	//if (!currentToken.empty()) tokens.push_back(currentToken);
 
-    // Filter phase
-    vector<string> filteredTokens;
-    for (const auto& t : tokens) {
-        // Keep bracketed variables
-        if (t.front() == '[' && t.back() == ']') {
-            filteredTokens.push_back(t);
-        }
-        else {
-            // It's a keyword
-            if (ignoredWords.find(t) == ignoredWords.end()) {
-                filteredTokens.push_back(t);
-            }
-        }
-    }
+	//// Filter phase
+	//vector<string> filteredTokens;
+	//for (const auto& t : tokens) {
+	//    // Keep bracketed variables
+	//    if (t.front() == '[' && t.back() == ']') {
+	//        filteredTokens.push_back(t);
+	//    }
+	//    else {
+	//        // It's a keyword
+	//        if (ignoredWords.find(t) == ignoredWords.end()) {
+	//            filteredTokens.push_back(t);
+	//        }
+	//    }
+	//}
 
-    return filteredTokens;
+	//return filteredTokens;
 }
 
 // Is token a bracketed input?
@@ -156,15 +147,10 @@ CustomSheet load() {
 	return *(new CustomSheet("nada", "nada"));
 }
 
-// Clears console window
-void ClearConsole() {
-    
-}
-
 // Save lets us store stuff in files
 // Felt like being unique and separated everything with pipes
 // *.psv = Pipe Separated Values
-void save() {};
+void save(string name, string content) {};
 
 // ==================================================================================================
 // =                                          CREATION                                              =
@@ -181,6 +167,42 @@ bool CheckForAlreadyExists(string sName, map<string, CustomSheet>& cSheets) {
 		SetColor(12); cout << "ALREADY EXISTS!\n\n";
 		return true;
 	}
+
+	// Then check the persistent index (pipe-separated values)
+	ifstream indexFile("index.psv");
+	if (indexFile.is_open()) {
+		string line;
+		auto trim = [](string &s) {
+			size_t start = s.find_first_not_of(" \t\r\n");
+			if (start == string::npos) { s.clear(); return; }
+			size_t end = s.find_last_not_of(" \t\r\n");
+			s = s.substr(start, end - start + 1);
+		};
+
+		while (getline(indexFile, line)) {
+			if (line.empty()) continue;
+
+			// take the first pipe-separated field as the sheet name
+			string sheet = line;
+			size_t pipePos = sheet.find('|');
+			if (pipePos != string::npos) sheet = sheet.substr(0, pipePos);
+			trim(sheet);
+
+			if (!sheet.empty() && ToUpper(sheet) == ToUpper(sName)) {
+				SetColor(12); cout << "\nERROR: SHEET ";
+				SetColor(9); cout << "[";
+				SetColor(15); cout << sName;
+				SetColor(9); cout << "] ";
+				SetColor(12); cout << "ALREADY EXISTS!\n\n";
+				indexFile.close();
+				return true;
+			}
+		}
+
+		indexFile.close();
+	}
+
+	// Not found
 	return false;
 };
 
@@ -201,21 +223,23 @@ void CreatedSheet(string sName, string cName) {
 // Parses through creation instruction to construct a new character sheet
 // Handles filler words like "A", "NEW", and others
 // Several optional fields like 'with character' and 'with fields'
-string HandleCreate(string inputString, map<string, CustomSheet>& customSheets, bool mode) {
+string HandleCreate(string inputString, map<string, CustomSheet>& customSheets) {
 
 	vector<string> inst; // Create pointer for tokenized instructions without reserving the space
-	SetFlags(new bool[4]{ 0, 0, 0, 0 }); // Reset program flags
+	SetFlags(new bool[4]{ 0, 0, 0 }); // Reset program flags
 
 	// MENU DISPLAY
-    switch (mode) {
+	switch (PROGRAM_FLAGS.NERD) {
 	case 0: { // normal person mode
 		
 		// GUI
 		string displayMessage = "";
+		string nextModeMessage = "";
 
-        char c = 0; // Input storage
+		// Input storage
+		char c = 0;
 
-        while (!PROGRAM_FLAGS.SELECTED) {
+		while (!PROGRAM_FLAGS.STEP) {
 			cout << CLEAR;
 
 			// PUT DECORATIONS HERE LATER
@@ -223,39 +247,39 @@ string HandleCreate(string inputString, map<string, CustomSheet>& customSheets, 
 			// debug info
 			cout << "selection: " << PROGRAM_FLAGS.SELECTION << "\n";
 			cout << "mode: " << PROGRAM_FLAGS.MODE << "\n";
-			cout << "step: " << PROGRAM_FLAGS.STEP << "\n";
-			cout << "selected: " << PROGRAM_FLAGS.SELECTED << "\n";
+			cout << "step: " << PROGRAM_FLAGS.STEP + 1 << "\n";
 
 			displayMessage = "\nWhat do you want to create?";
 			displayMessage += "\n---------------------------";
 
+			// Create Menu Options
 			switch (PROGRAM_FLAGS.SELECTION) {
-            case 0b00: {
+			case 0b000: {
 				displayMessage += "\nCharacter Sheet File      >";
-                displayMessage += "\nCharacter Sheet Field      ";
-                displayMessage += "\nNew Enemy Type File        ";
-                displayMessage += "\nNew Enemy Instance File    ";
+				displayMessage += "\nCharacter From Template    ";
+				displayMessage += "\nTemplate File              ";
+				displayMessage += "\nEnemy From Template        ";
 				break;
 			}
-            case 0b01: {
+			case 0b001: {
 				displayMessage += "\nCharacter Sheet File       ";
-                displayMessage += "\nCharacter Sheet Field     >";
-                displayMessage += "\nNew Enemy Type File        ";
-                displayMessage += "\nNew Enemy Instance File    ";
+				displayMessage += "\nCharacter From Template   >";
+				displayMessage += "\nTemplate File              ";
+				displayMessage += "\nEnemy From Template        ";
 				break;
 			}
-            case 0b10: {
+			case 0b010: {
 				displayMessage += "\nCharacter Sheet File       ";
-                displayMessage += "\nCharacter Sheet Field      ";
-                displayMessage += "\nNew Enemy Type File       >";
-                displayMessage += "\nNew Enemy Instance File    ";
+				displayMessage += "\nCharacter From Template    ";
+				displayMessage += "\nTemplate File             >";
+				displayMessage += "\nEnemy From Template        ";
 				break;
 			}
-            case 0b11: {
+			case 0b011: {
 				displayMessage += "\nCharacter Sheet File       ";
-                displayMessage += "\nCharacter Sheet Field      ";
-                displayMessage += "\nNew Enemy Type File        ";
-                displayMessage += "\nNew Enemy Instance File   >";
+				displayMessage += "\nCharacter From Template    ";
+				displayMessage += "\nTemplate File              ";
+				displayMessage += "\nEnemy From Template       >";
 				break;
 			}
 			default:
@@ -273,7 +297,6 @@ string HandleCreate(string inputString, map<string, CustomSheet>& customSheets, 
 
 		// After pressing enter/return, move into the sub-menu for the selected option.
 		// This sets the current sub-menu to the same as the menu selection from earlier.
-        PROGRAM_FLAGS.MODE = PROGRAM_FLAGS.SELECTION;
 		PROGRAM_FLAGS.STEP++;
 		displayMessage += "\n\n---------------------------\n";
 
